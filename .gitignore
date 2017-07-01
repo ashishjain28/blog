@@ -3,3 +3,9 @@ blog_env/
 
 # IDE specific folder
 .idea/
+
+#SQLite DB
+db.sqlite3
+
+# Byte-compiled / Optimized / DLL files
+*.py[cod]
