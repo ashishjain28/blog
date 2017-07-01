@@ -1,0 +1,5 @@
+# virtual environment
+blog_env/
+
+# IDE specific folder
+.idea/
