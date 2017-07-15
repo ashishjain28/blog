@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, FormView
 from django.views.generic.detail import DetailView
 from .models import Post
@@ -60,3 +60,9 @@ def post_update(request, post_id=None):
         "form": form
     }
     return render(request, "posts/create_post.html", context)
+
+
+def post_delete(request, post_id=None):
+    instance = get_object_or_404(Post, id=post_id)
+    instance.delete()
+    return redirect('posts:list')

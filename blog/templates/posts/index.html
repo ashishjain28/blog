@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Posts</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}
+    All Posts
+{% endblock %}
+
+{% block content %}
     {% for post in object_list %}
         <!-- {% url 'posts:detail' post_id=post.id %} -->
         <h1><a href='{{ post.get_absolute_url }}'> {{ post.title }} </a></h1>
     {% endfor %}
-</body>
-</html>
+{% endblock content %}
