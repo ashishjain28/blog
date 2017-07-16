@@ -9,3 +9,7 @@ db.sqlite3
 
 # Byte-compiled / Optimized / DLL files
 *.py[cod]
+
+# static files folder
+static_cdn/
+
