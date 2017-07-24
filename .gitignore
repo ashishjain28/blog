@@ -13,3 +13,6 @@ db.sqlite3
 # static files folder
 static_cdn/
 
+# files uploaded by user
+media_cdn/
+

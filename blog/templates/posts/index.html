@@ -5,8 +5,42 @@
 {% endblock %}
 
 {% block content %}
-    {% for post in object_list %}
-        <!-- {% url 'posts:detail' post_id=post.id %} -->
-        <h1><a href='{{ post.get_absolute_url }}'> {{ post.title }} </a></h1>
-    {% endfor %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <h1>All Posts</h1>
+        {% for post in object_list %}
+            <div class="row">
+                <div class="col-sm-12 ">
+                    <div class="thumbnail">
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" class="img-responisve"/>
+                        {% endif %}
+                        <div class="caption">
+                            <h3><a href='{{ post.get_absolute_url }}'> {{ post.title }} </a>
+                                <small>{{ post.updated | timesince }} ago</small></h3>
+                            <p>{{ post.content | linebreaks | truncatechars:120 }}</p>
+                            <p> <a href="{{ post.get_absolute_url }}" class="btn btn-primary"
+                                   role="button">View</a> </p>
+                        </div>
+                    </div>
+                </div>
+            <!--    {% cycle "" "</div><div class='row'>" %} -->
+            </div>
+        {% endfor %}
+
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="/posts?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="/posts?page={{ page_obj.next_page_number }}">Next</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}

@@ -2,8 +2,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, FormView
 from django.views.generic.detail import DetailView
-from .models import Post
-from .forms import PostForm
+#from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from models import Post
+from forms import PostForm
 
 # from .forms import CreatePostForm
 # Create your views here.
@@ -12,6 +13,9 @@ from .forms import PostForm
 class PostsList(ListView):
     template_name = "posts/index.html"
     model = Post
+    #ordering = "-updated"
+    paginate_by = 2
+
 
 ''' 
 def posts_home(request):
@@ -22,7 +26,7 @@ def posts_home(request):
 class PostDetail(DetailView):
     model = Post
     template_name = "posts/post_detail.html"
-    pk_url_kwarg = "post_id"
+    #pk_url_kwarg = "slug"
 
 
 # class CreatePost(FormView):
@@ -35,7 +39,7 @@ class PostDetail(DetailView):
 #         return super(CreatePost, self).form_valid(form)
 
 def post_create(request):
-    form = PostForm(request.POST or None)
+    form = PostForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
@@ -51,7 +55,7 @@ def post_create(request):
 
 def post_update(request, post_id=None):
     instance = get_object_or_404(Post, id=post_id)
-    form = PostForm(request.POST or None, instance=instance)
+    form = PostForm(request.POST or None, request.FILES or None, instance=instance)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
