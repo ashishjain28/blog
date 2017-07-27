@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, FormView
 from django.views.generic.detail import DetailView
@@ -39,9 +39,13 @@ class PostDetail(DetailView):
 #         return super(CreatePost, self).form_valid(form)
 
 def post_create(request):
+    if not (request.user.is_staff or request.user.is_superuser):
+        raise Http404
+
     form = PostForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         instance = form.save(commit=False)
+        instance.user = request.user
         instance.save()
         return HttpResponseRedirect(instance.get_absolute_url())
 
@@ -53,8 +57,10 @@ def post_create(request):
     return render(request, "posts/create_post.html", context)
 
 
-def post_update(request, post_id=None):
-    instance = get_object_or_404(Post, id=post_id)
+def post_update(request, slug=None):
+    if not (request.user.is_staff or request.user.is_superuser):
+        raise Http404
+    instance = get_object_or_404(Post, slug=slug)
     form = PostForm(request.POST or None, request.FILES or None, instance=instance)
     if form.is_valid():
         instance = form.save(commit=False)
@@ -66,7 +72,7 @@ def post_update(request, post_id=None):
     return render(request, "posts/create_post.html", context)
 
 
-def post_delete(request, post_id=None):
-    instance = get_object_or_404(Post, id=post_id)
+def post_delete(request, slug=None):
+    instance = get_object_or_404(Post, slug=slug)
     instance.delete()
     return redirect('posts:list')

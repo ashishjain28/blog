@@ -1,15 +1,36 @@
 {% extends "base.html" %}
+{% load urlify %}
 
 {% block title %}
     {{ object.title }}
 {% endblock title %}
 
 {% block content %}
+
     <div class="col-sm-6 col-sm-offset-3">
         {% if object.image %}
             <img src ="{{ object.image.url }}" class="img-responsive"/>
         {% endif %}
-        <h1> {{ object.title }} <small>{{ object.updated }}</small></h1>
+        <h1> {{ object.title }}
+            {% if object.draft %}<span style="color:red;">Draft</span> {% endif %}
+            <small>{{ object.publish}}</small></h1>
+        <h3>
+            Author:
+            {% if object.user.get_full_name %}
+                {{ object.user.get_full_name }}
+            {% endif %}
+
+        </h3>
+        <h3>
+            <div class="fb-like" data-href="{{ request.build_absolute_uri }}"
+                 data-layout="button_count"
+                 data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+        </h3>
+
+
         {{ object.content | linebreaks}}
+        <hr />
+        <div class="fb-comments"></div>
     </div>
+
 {% endblock content %}
