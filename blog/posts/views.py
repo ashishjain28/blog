@@ -1,10 +1,11 @@
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, FormView
 from django.views.generic.detail import DetailView
 #from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from models import Post
-from forms import PostForm
+from .models import Post
+from .forms import PostForm
 
 # from .forms import CreatePostForm
 # Create your views here.
@@ -15,6 +16,21 @@ class PostsList(ListView):
     model = Post
     #ordering = "-updated"
     paginate_by = 2
+
+    def get_queryset(self):
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            queryset_list = Post.objects.all()
+            query = self.request.GET.get('q')
+            if query:
+                return queryset_list.filter(
+                    Q(title__icontains=query) |
+                    Q(content__icontains=query) |
+                    Q(user__first_name__icontains=query) |
+                    Q(user__last_name__icontains=query)
+                ).distinct()
+            return queryset_list
+        else:
+            return Post.objects.active()
 
 
 ''' 
@@ -27,6 +43,13 @@ class PostDetail(DetailView):
     model = Post
     template_name = "posts/post_detail.html"
     #pk_url_kwarg = "slug"
+
+    def get_queryset(self):
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return Post.objects.all().filter(slug=self.kwargs['slug'])
+
+        else:
+            raise Http404
 
 
 # class CreatePost(FormView):
