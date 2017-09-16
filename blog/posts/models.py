@@ -59,8 +59,9 @@ def pre_save_post(sender, instance, *args, **kwargs):
         slug += '-1'
         exists = Post.objects.filter(slug=slug).exists()
         while exists:
-            value = int(slug.split('-')[-1]) + 1
-            slug = '-'.join(slug.split('-')[:-1]) + '-' + str(value)
+            parts = slug.split('-')
+            value = int(parts[-1]) + 1
+            slug = '-'.join(parts[:-1]) + '-' + str(value)
             exists = Post.objects.filter(slug=slug).exists()
     instance.slug = slug
 
